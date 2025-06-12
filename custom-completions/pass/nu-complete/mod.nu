@@ -7,33 +7,28 @@ def pass_completions_directory [] {
 }
 
 export def "nu-complete pass-files" [] {
-    let dir = (pass_completions_directory)
-	ls ($dir | path join "**" | path join "*.gpg")
-		| get name 
-		| each {|it| ( $it
-            | path relative-to $dir
-            | str replace ".gpg" ""
-            )
-        }
+    enter (pass_completions_directory)
+    ls **/*.gpg
+        | get name
+        | each { || str replace ".gpg" "" }
 }
 
 export def "nu-complete pass-directories" [] {
-    let dir = (pass_completions_directory)
-	ls ($dir | path join **)
+    enter (pass_completions_directory)
+    ls **
         | get name
         | where { |it| not (ls $it | is-empty) }
-		| each {|it| ( $it | path relative-to $dir) }
 }
 
 export def "nu-complete pass-gpg" [] {
-	^gpg --list-keys
-		| lines
-		| skip 2
-		| split list ''
-		| each { |entry|
-			{
-				value: ($entry.1 | str trim),
-				description: ($entry.2 | parse --regex '^uid\s*\[[\w\s]*\]\s*(.*?)\s*$' | get 0.capture0)
-			}
-		}
+    ^gpg --list-keys
+        | lines
+        | skip 2
+        | split list ''
+        | each { |entry|
+            {
+                value: ($entry.1 | str trim),
+                description: ($entry.2 | parse --regex '^uid\s*\[[\w\s]*\]\s*(.*?)\s*$' | get 0.capture0)
+            }
+        }
 }

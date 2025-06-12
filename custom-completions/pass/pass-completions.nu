@@ -37,7 +37,7 @@ export extern "pass insert" [
 	--force(-f) # Omit prompt when trying to overwrite existing password.
 ]
 
-export alias "pass add" = pass insert
+# export alias "pass add" = pass insert
 
 # Edit an existing password.
 export extern "pass edit" [
